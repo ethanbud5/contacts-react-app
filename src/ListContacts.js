@@ -5,12 +5,15 @@ import sortBy from "sort-by";
 
 
 class ListContacts extends Component {
+    constructor(props){
+        super(props)
+        this.state={
+            query: ""
+        }
+    }
     static propTypes = {
         contacts: PropTypes.array.isRequired,
         onDeleteContact: PropTypes.func.isRequired
-    }
-    state={
-        query: ""
     }
     updateQuery = (query) => {
         this.setState({query: query.trim()})
@@ -18,6 +21,7 @@ class ListContacts extends Component {
     clearQuery = () => {
         this.setState({query:""})
     }
+
         render(){ 
             const { contacts, onDeleteContact } = this.props;
             const { query } = this.state;
@@ -39,6 +43,11 @@ class ListContacts extends Component {
                             placeholder="Search contacts"
                             value={query}
                             onChange={(event) => this.updateQuery(event.target.value)}
+                        />
+                        <a 
+                            className="add-contact" 
+                            onClick={()=>this.props.toNavigate("create")}
+                            href="#"
                         />
                     </div>
                     {showingContacts.length !== contacts.length &&(
