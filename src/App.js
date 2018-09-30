@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
 import ListContacts from "./ListContacts"
 import * as ContactAPI from "./utils/ContactsAPI"
-import CreateContact from "./CreateContact"
+import CreateContact from "./CreateContact";
+import {Route} from "react-router-dom";
 
 export default class App extends Component {
   constructor(){
@@ -10,7 +11,7 @@ export default class App extends Component {
       screen:"list",
       contacts: []
     }
-    this.toNavigate = this.toNavigate.bind(this);
+    // this.toNavigate = this.toNavigate.bind(this);
     this.onCreateContact = this.onCreateContact.bind(this)
   }
     componentDidMount(){
@@ -24,16 +25,15 @@ export default class App extends Component {
     }))
     ContactAPI.remove(contact);
   }
-  toNavigate(loc){
-    this.setState({screen:loc})
-  }
+  // toNavigate(loc){
+  //   this.setState({screen:loc})
+  // }
   onCreateContact(contact){
     ContactAPI.create(contact).then(contact=>{
       let contactArray = this.state.contacts;
       contactArray.push(contact)
       this.setState({
-        contacts: contactArray,
-        screen:"list"
+        contacts: contactArray
       })
     })
   }
@@ -41,20 +41,27 @@ export default class App extends Component {
     console.log(this.state)
     return (
       <div>
-        {this.state.screen === "list" && (
-
+        <Route exact path="/" render={()=>(
           <ListContacts 
           onDeleteContact={this.removeContact} 
           contacts={this.state.contacts}
           toNavigate={this.toNavigate}
           />
-          )}
-          {this.state.screen === "create" &&(
+
+        )}/>
+
+          
+          <Route path="/create" render={({history})=>(
             <CreateContact
               toNavigate={this.toNavigate}
-              onCreateContact={this.onCreateContact}
+              onCreateContact={(contact=>{
+                this.onCreateContact(contact)
+                history.push("/")
+              })
+
+              }
             />
-          )}
+          )}/>
       </div>
       
     )
